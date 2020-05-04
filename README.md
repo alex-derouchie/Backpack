@@ -1,7 +1,30 @@
 # Backpack
-Backpack is a simple Inventory Management System designed for small businesses and individuals looking to be more organized.
 
-This is a working directory. To get started, clone the repository, navigate to the project directory, and in the command line, type:
+Backpack is a free, simple inventory management system for small businesses and individuals.
+
+## Installation
+
+Clone the repository to your directory of choice. Within that directory, run in the command line:
+
+```bash
 py manage.py runserver
-to initialize the development server. Not that this project requires the latest versions of Python, Django, and Pillow.
-Django and Pillow are both available using PIP.
+```
+
+To  run the development server.
+
+note that current versions of Python, Django, and Pillow are required. To install Django and Pillow:
+
+```bash
+pip install django
+pip install pillow
+```
+
+## Usage
+
+Once the development server is running, navigate to:
+
+```bash
+localhost:8000
+```
+to preview the project. From there, you can begin developing!
+This project does not yet have a final release.
