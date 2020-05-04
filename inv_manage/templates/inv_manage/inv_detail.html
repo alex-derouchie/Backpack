@@ -1,0 +1,45 @@
+{% extends 'inv_manage/layout.html' %} {% block content %}
+
+<ul class="collection">
+  <article class="media content-section">
+    <img
+      class="rounded-circle article-img"
+      src="{{ inv.author.profile.image.url }}"
+    />
+    <div class="media-body">
+      <div class="article-metadata">
+        <a
+          class="mr-2"
+          href="{% url 'inv_manage-user_invs' inv.author.username %}"
+          >{{ inv.author }}</a
+        >
+        <small class="text-muted">{{ inv.date_created }}</small>
+        {% if inv.author == user %}
+        <div>
+          <a
+            class="btn btn-secondary btn-sm mt-1 mb-1"
+            href="{% url 'inv_manage-update' inv.id %}"
+            >update</a
+          >
+          <a
+            class="btn btn-danger btn-sm mt-1 mb-1"
+            href="{% url 'inv_manage-delete' inv.id %}"
+            >delete</a
+          >
+        </div>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ inv.name }}</h2>
+
+      <h4 class="article-title">Inventory Items</h4>
+      <ul class="list-group m-3">
+        {% for item in item_list %}
+        <li class="list-group-item">{{ item.name }}</li>
+        {% endfor %}
+      </ul>
+      <small class="text-muted">Inventory Size: {{ inv.inv_size }}</small>
+      <a class="btn btn-sm btn-outline-info mb-4" href="?page=1">Add Item</a>
+    </div>
+  </article>
+</ul>
+{% endblock %}
