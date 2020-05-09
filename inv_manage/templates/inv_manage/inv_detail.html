@@ -38,7 +38,11 @@
         {% endfor %}
       </ul>
       <small class="text-muted">Inventory Size: {{ inv.inv_size }}</small>
-      <a class="btn btn-sm btn-outline-info mb-4" href="?page=1">Add Item</a>
+      <a
+        class="btn btn-sm btn-outline-info mb-4"
+        href="{% url 'inv_manage-create-item' inv.id %}"
+        >Add Item</a
+      >
     </div>
   </article>
 </ul>

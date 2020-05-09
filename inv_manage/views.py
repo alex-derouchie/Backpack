@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from .models import Inventory, Item
+from .forms import ItemForm
 
 
 def about(request):
@@ -72,14 +74,39 @@ class InvCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ItemCreateView(LoginRequiredMixin, CreateView):
-    model = Item
-    fields = ['name', 'description', 'quantity', 'inventory']
-    template_name = 'inv_manage/item_form.html'
+#Class based view for item creation - switched to method view directly below (NOTE: names are the same)
+#class ItemCreateView(LoginRequiredMixin, FormView):
+#    form_class = ItemForm
+#    template_name = 'inv_manage/item_form.html'
+#    success_url = '/'
+#
+#    def form_valid(self, form):
+#        form.instance.author = self.request.user
+#       return super().form_valid(form)
+#
+#    def get_context_data(self, **kwargs):
+#        context = super().get_context_data(**kwargs)
+#        inv = get_object_or_404(Inventory, pk=self.kwargs.get('pk'))
+#        context['item-inv'] = inv
+#        print(inv)
+#        return context
 
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
+def ItemCreateView(request, pk):
+    if request.method == 'POST':
+        form = ItemForm(request.POST)
+        if form.is_valid():
+            item = Item()
+            item.name = form.cleaned_data['item_name']
+            item.description = form.cleaned_data['item_description']
+            item.quantity = form.cleaned_data['item_quantity']
+            item.inventory = Inventory.objects.get(pk=pk)
+            item.save()
+            return HttpResponseRedirect('/')
+    else:
+        form = ItemForm()
+    print(request)
+    return render(request, 'inv_manage/item_form.html', {'form': form})
+
 
 
 class InvUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
