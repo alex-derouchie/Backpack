@@ -1,0 +1,13 @@
+{% extends 'inv_manage/layout.html' %} {% block content %}
+
+<ul class="collection">
+  <article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ item.picture }}" />
+    <div class="media-body">
+      <h2 class="article-title">{{ item.name }}</h2>
+      <p>{{ item.description }}</p>
+      <small>{{ item.quantity }}</small>
+    </div>
+  </article>
+</ul>
+{% endblock %}

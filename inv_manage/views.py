@@ -8,9 +8,11 @@ from .models import Inventory, Item
 from .forms import ItemForm
 
 
-def about(request):
+def About(request):
     return render(request, 'inv_manage/about.html', {'title': 'About'})
 
+def SharedInvs(request):
+    return render(request, 'inv_manage/shared_invs.html')
 
 def IndexView(request):
     return render(request, 'inv_manage/index.html')
@@ -72,6 +74,12 @@ class InvCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+
+class ItemDetailView(DetailView):
+    model = Item
+    template_name = 'inv_manage/item_detail.html'
+    context_object_name = 'item'
 
 
 #Class based view for item creation - switched to method view directly below (NOTE: names are the same)

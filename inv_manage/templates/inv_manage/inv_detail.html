@@ -34,7 +34,12 @@
       <h4 class="article-title">Inventory Items</h4>
       <ul class="list-group m-3">
         {% for item in item_list %}
-        <li class="list-group-item">{{ item.name }}</li>
+        <li class="list-group-item">
+          <a href="{% url 'inv_manage-item-detail' item.pk %}"
+            >{{ item.name }}</a
+          >
+          <small class="float-right">quantity: {{ item.quantity }}</small>
+        </li>
         {% endfor %}
       </ul>
       <small class="text-muted">Inventory Size: {{ inv.inv_size }}</small>
@@ -43,6 +48,7 @@
         href="{% url 'inv_manage-create-item' inv.id %}"
         >Add Item</a
       >
+      <a class="btn btn-sm btn-outline-info mb-4" href="#">Share</a>
     </div>
   </article>
 </ul>
