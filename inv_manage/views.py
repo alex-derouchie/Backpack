@@ -4,15 +4,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
-from .models import Inventory, Item
-from .forms import ItemForm
+from .models import Inventory, Item, SharePass
+from .forms import ItemForm, ShareForm
+from django.contrib import messages
 
 
 def About(request):
     return render(request, 'inv_manage/about.html', {'title': 'About'})
-
-def SharedInvs(request):
-    return render(request, 'inv_manage/shared_invs.html')
 
 def IndexView(request):
     return render(request, 'inv_manage/index.html')
@@ -115,6 +113,36 @@ def ItemCreateView(request, pk):
     print(request)
     return render(request, 'inv_manage/item_form.html', {'form': form})
 
+def AddUserView(request, pk):
+    if request.method == "POST":
+        form = ShareForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['user_to_add']
+            access = form.cleaned_data['user_access']
+            if (User.objects.filter(username=username).count() > 0 and username != request.user.username):
+                new_pass = SharePass()
+                new_pass.added_user = User.objects.get(username = username)
+                new_pass.inventory = Inventory.objects.get(pk=pk)
+                if(access == "can_edit"):
+                    new_pass.can_edit = True
+                else:
+                    new_pass.can_edit = False
+                new_pass.save()
+                messages.success(request, f'Inventory shared with user')
+                return HttpResponseRedirect(f'/inv/{pk}')
+            elif (username == request.user.username):
+                messages.warning(request, "You can't share Inventories with yourself!")
+            else:
+                messages.warning(request, "User could not be found")
+    else:
+        form = ShareForm()
+    return render(request, 'inv_manage/share_form.html', {'form': form})
+        
+def SharedInvs(request):
+    context = {
+        'shared': SharePass.objects.filter(added_user=request.user)
+    }
+    return render(request, 'inv_manage/shared_invs.html', context)
 
 
 class InvUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

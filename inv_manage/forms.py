@@ -12,4 +12,8 @@ class ItemForm(forms.Form):
     class Meta:
         model = Item
         fields = ['name', 'description', 'quantity', 'picture']
+
+class ShareForm(forms.Form):
+    user_to_add = forms.CharField(label="Add User", max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Username'}))
+    user_access = forms.ChoiceField(label="User Access", choices=(("can_edit", "Can Edit"), ("can_view", "Can View")))
     

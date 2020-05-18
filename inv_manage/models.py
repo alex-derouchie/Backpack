@@ -31,5 +31,11 @@ class Item(models.Model):
         return self.name
 
 
-    
+class SharePass(models.Model):
+    added_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE)
+    can_edit = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.added_user.username} <-> {self.inventory}"
 

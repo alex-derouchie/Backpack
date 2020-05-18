@@ -1,5 +1,21 @@
 {% extends 'inv_manage/layout.html' %} {% block content %}
 
-<h3>Coming Soon!</h3>
+<ul class="collection">
+    {% for share in shared %}
+    <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ share.inventory.author.profile.image.url }}">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2"
+                    href="{% url 'inv_manage-user_invs' share.inventory.author.username %}">{{ share.inventory.author }}</a>
+                <small class="text-muted">{{ share.inventory.date_created }}</small>
+            </div>
+            <h2><a class="article-title"
+                    href="{% url 'inv_manage-detail' share.inventory.id %}">{{ share.inventory.name }}</a></h2>
+            <small class="text-muted">Inventory Size: {{ share.inventory.inv_size }}</small>
+        </div>
+    </article>
+    {% endfor %}
+</ul>
 
 {% endblock %}
