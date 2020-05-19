@@ -1,12 +1,11 @@
 from django.urls import path
-from .views import InvListView, InvDetailView, InvCreateView, InvUpdateView, InvDeleteView, UserInvListView, ItemDetailView
+from .views import InvListView, InvDetailView, InvCreateView, InvUpdateView, InvDeleteView, ItemDetailView
 from . import views
 
 
 
 urlpatterns = [
     path('', InvListView.as_view(), name='inv_manage-index'),
-    path('user/<str:username>', UserInvListView.as_view(), name='inv_manage-user_invs'),
     path('shared/', views.SharedInvs, name='inv_manage-shared'),
     path('inv/<int:pk>/', InvDetailView.as_view(), name='inv_manage-detail'),
     path('inv/<int:pk>/update/', InvUpdateView.as_view(), name='inv_manage-update'),

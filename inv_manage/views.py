@@ -35,17 +35,6 @@ class InvListView(ListView):
             return Inventory.objects.all()
 
 
-class UserInvListView(ListView):
-    model = Inventory
-    template_name = 'inv_manage/user_invs.html'
-    context_object_name = 'Inventories'
-    paginate_by = 5
-
-    def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Inventory.objects.filter(author=user).order_by('-date_created')
-
-
 class InvDetailView(DetailView):
     model = Inventory
     template_name = 'inv_manage/inv_detail.html'
@@ -101,13 +90,16 @@ def ItemCreateView(request, pk):
     if request.method == 'POST':
         form = ItemForm(request.POST)
         if form.is_valid():
+            inv = Inventory.objects.get(pk=pk)
             item = Item()
             item.name = form.cleaned_data['item_name']
             item.description = form.cleaned_data['item_description']
             item.quantity = form.cleaned_data['item_quantity']
-            item.inventory = Inventory.objects.get(pk=pk)
+            item.inventory = inv
             item.save()
-            return HttpResponseRedirect('/')
+            inv.inv_size = Item.objects.filter(inventory=inv).count()
+            inv.save()
+            return HttpResponseRedirect(f'/inv/{pk}')
     else:
         form = ItemForm()
     print(request)

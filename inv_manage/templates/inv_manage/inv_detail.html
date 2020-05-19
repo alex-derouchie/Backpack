@@ -5,7 +5,7 @@
     <img class="rounded-circle article-img" src="{{ inv.author.profile.image.url }}" />
     <div class="media-body">
       <div class="article-metadata">
-        <a class="mr-2" href="{% url 'inv_manage-user_invs' inv.author.username %}">{{ inv.author }}</a>
+        <span class="mr-2">{{ inv.author }}</span>
         <small class="text-muted">{{ inv.date_created }}</small>
         {% if inv.author == user %}
         <div>
