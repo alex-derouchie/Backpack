@@ -1,4 +1,7 @@
-{% extends 'inv_manage/layout.html' %}<!--WARNING: template coupled to inv_manage app within Backpack-->
+<!--------------------------------------------------------------------------------
+    This page prompts the user to confirm their desire to delete an inventory.
+---------------------------------------------------------------------------------->
+{% extends 'inv_manage/layout.html' %}
 {% block content %}
 <div class="content-section">
   <form method="POST">
@@ -9,11 +12,7 @@
     </fieldset>
     <div class="form-group">
       <button class="btn btn-outline-danger" type="submit">Delete</button>
-      <a
-        class="btn btn-outline-secondary"
-        href="{% url 'inv_manage-detail' inv.id %}"
-        >Cancel</a
-      >
+      <a class="btn btn-outline-secondary" href="{% url 'inv_manage-detail' inv.id %}">Cancel</a>
     </div>
   </form>
 </div>

@@ -1,5 +1,8 @@
+<!--------------------------------------------------------------------------------
+    This page displays a list of previews to inventories that have been shared 
+    with the current user.
+---------------------------------------------------------------------------------->
 {% extends 'inv_manage/layout.html' %} {% block content %}
-
 <ul class="collection">
     <h2 class="center-align">Shared Inventories</h3>
         {% for share in shared %}

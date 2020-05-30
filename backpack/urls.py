@@ -8,7 +8,7 @@ from users import views as user_views
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    #User Management URLs - Coupled to users
+    #User Management URLs - Coupled to users application
     path('register/', user_views.register, name='register'),
     path('profile/', user_views.profile, name='profile'),
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
@@ -18,8 +18,10 @@ urlpatterns = [
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'), name='password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), name='password_reset_complete'),
 
+    #If no User Application matches, chack for match in inv_manage application urls.py file.
     path('', include('inv_manage.urls'))
 ]
 
+#Allows for media access during development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

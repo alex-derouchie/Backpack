@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+#######################################################################
+# This file defines the database models for the inv_manage app.
+#######################################################################
+
+#database representation of invantories
 class Inventory(models.Model):
     name = models.CharField(max_length = 100)
     date_created = models.DateTimeField(auto_now_add = True)
@@ -15,6 +20,7 @@ class Inventory(models.Model):
         return reverse('inv_manage-detail', kwargs={'pk': self.pk})
 
 
+#Database representation of items
 class Item(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -30,7 +36,7 @@ class Item(models.Model):
     def __str__(self):
         return self.name
 
-
+#Database model required to support inventory sharing
 class SharePass(models.Model):
     added_user = models.ForeignKey(User, on_delete=models.CASCADE)
     inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE)

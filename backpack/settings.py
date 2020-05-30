@@ -116,6 +116,8 @@ MEDIA_URL = '/media/'
 #Set Crispy Forms to use Bootstrap 4
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
+
+#Redirects users upon logging in
 LOGIN_REDIRECT_URL = 'inv_manage-index'
 LOGIN_URL = 'login'
 

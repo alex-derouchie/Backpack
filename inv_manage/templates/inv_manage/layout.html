@@ -1,3 +1,8 @@
+<!--------------------------------------------------------------------------------
+    This is the main HTML template that all other pages extend. It contains
+    information common to all pages on the site, including the head of the page,
+    the main navigation bar, and the container divs universal to all pages.
+---------------------------------------------------------------------------------->
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -13,6 +18,7 @@
   <!--Main CSS styles-->
   <link rel="stylesheet" type="text/css" href="{% static 'inv_manage/main.css' %}" />
 
+  <!-- allows for unique titles for specific pages -->
   {% if title %}
   <title>Backpack - {{ title }}</title>
   {% else %}
@@ -21,10 +27,12 @@
 </head>
 
 <body>
+  <!-- Main header and navigation across the website. -->
   <header class="site-header">
     <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
       <div class="container">
         <a class="navbar-brand mr-4" href="/">Backpack</a>
+        <!-- Responsive button to access navigation options on smaller viewports. -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
           aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -55,28 +63,15 @@
     <div>
       <main role="main" class="container">
         <div class="row">
+          <!-- Responsive container for main content (See Bootstrap 12-column grid format) -->
           <div class="col-md-8">
+            <!-- Handles any messages if present -->
             {% if messages %} {% for message in messages %}
             <div class="alert alert-{{ message.tags }}">
               {{ message }}
             </div>
             {% endfor %} {% endif %} {% block content %}{% endblock %}
           </div>
-          <!-- Not Sure if I want this sidebar in the project at this point.
-            <div class="col-md-4">
-              <div class="content-section">
-                <h3>Other Projects</h3>
-                <p class='text-muted'>
-                  <ul class="list-group">
-                    <li class="list-group-item list-group-item-light">About This Project</li>
-                    <li class="list-group-item list-group-item-light">FiefX</li>
-                    <li class="list-group-item list-group-item-light">Sorting Visualizer</li>
-                    <li class="list-group-item list-group-item-light">Full Resume</li>
-                  </ul>
-                </p>
-              </div>
-            </div>
-           End Sidebar-->
         </div>
       </main>
     </div>

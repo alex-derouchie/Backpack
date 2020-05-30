@@ -1,5 +1,9 @@
+<!--------------------------------------------------------------------------------
+    This page provides deatails into specific inventories that the user has access
+    to. It displays the information from the inventory itself, as well as a list
+    of links to the detail pages for the items associated to the inventory.
+---------------------------------------------------------------------------------->
 {% extends 'inv_manage/layout.html' %} {% block content %}
-
 <ul class="collection">
   <article class="media content-section">
     <img class="rounded-circle article-img" src="{{ inv.author.profile.image.url }}" />

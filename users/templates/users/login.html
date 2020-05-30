@@ -1,4 +1,10 @@
-{% extends 'inv_manage/layout.html' %}<!--WARNING: template coupled to inv_manage app within Backpack-->
+<!--------------------------------------------------------------------------------
+    This page displays the form responsible for logging into the system,
+    as well as recovery options.
+---------------------------------------------------------------------------------->
+
+<!--WARNING: template coupled to inv_manage app within Backpack Project-->
+{% extends 'inv_manage/layout.html' %}
 {% load crispy_forms_tags %} {% block content %}
 <div class="content-section">
   <form method="POST">
@@ -9,9 +15,7 @@
     </fieldset>
     <div class="form-group">
       <button class="btn btn-outline-info" type="submit">Login</button>
-      <small class="text-muted ml-2"
-        ><a href="{% url 'password_reset' %}">Forgot your password?</a></small
-      >
+      <small class="text-muted ml-2"><a href="{% url 'password_reset' %}">Forgot your password?</a></small>
     </div>
   </form>
   <div class="border-top pt-3">

@@ -1,10 +1,13 @@
-{% extends 'inv_manage/layout.html' %}<!--WARNING: template coupled to inv_manage app within Backpack-->
+<!--------------------------------------------------------------------------------
+    This page displays the form responsible for creating a new inventory.
+---------------------------------------------------------------------------------->
+{% extends 'inv_manage/layout.html' %}
 {% load crispy_forms_tags %} {% block content %}
 <div class="content-section">
   <form method="POST">
     {% csrf_token %}
     <fieldset class="form-group">
-      <legend class="border-bottom mb-4">Inventory</legend>
+      <legend class="border-bottom mb-4">New Inventory</legend>
       {{ form|crispy }}
     </fieldset>
     <div class="form-group">

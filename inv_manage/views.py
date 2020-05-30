@@ -8,84 +8,22 @@ from .models import Inventory, Item, SharePass
 from .forms import ItemForm, ShareForm
 from django.contrib import messages
 
+#######################################################################
+# This file defines the views for the inv_manage app. In Django, views
+# define the data and functionality associated to each HTML template
+# in the system.
+#######################################################################
 
+#Renders the about page
 def About(request):
     return render(request, 'inv_manage/about.html', {'title': 'About'})
 
+#Renders the home page
 def IndexView(request):
     return render(request, 'inv_manage/index.html')
 
-###########################################
-#           CLASS BASED VIEWS             #
-###########################################
-
-class InvListView(ListView):
-    model = Inventory
-    template_name = 'inv_manage/index.html'
-    context_object_name = 'Inventories'
-    ordering = ['-date_created']
-    paginate_by = 5
-
-    # This takes all the Inventories in the DB and filters out Inventories
-    # from other users.
-    def get_queryset(self):
-        if self.request.user.is_authenticated:
-            return Inventory.objects.filter(author=self.request.user)
-        else:
-            return Inventory.objects.all()
-
-
-class InvDetailView(DetailView):
-    model = Inventory
-    template_name = 'inv_manage/inv_detail.html'
-    context_object_name = 'inv'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        inv = get_object_or_404(Inventory, pk=self.kwargs.get('pk'))
-        context['item_list'] = Item.objects.filter(inventory = inv)
-        print(self.kwargs)
-        return context
-
-    #def get_queryset(self):
-        #pk = self.kwargs.get('pk')
-        #print(self.kwargs)
-        #return Item.objects.filter(pk=pk).order_by('name')
-
-
-class InvCreateView(LoginRequiredMixin, CreateView):
-    model = Inventory
-    fields = ['name']
-    template_name = 'inv_manage/inv_form.html'
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
-
-class ItemDetailView(DetailView):
-    model = Item
-    template_name = 'inv_manage/item_detail.html'
-    context_object_name = 'item'
-
-
-#Class based view for item creation - switched to method view directly below (NOTE: names are the same)
-#class ItemCreateView(LoginRequiredMixin, FormView):
-#    form_class = ItemForm
-#    template_name = 'inv_manage/item_form.html'
-#    success_url = '/'
-#
-#    def form_valid(self, form):
-#        form.instance.author = self.request.user
-#       return super().form_valid(form)
-#
-#    def get_context_data(self, **kwargs):
-#        context = super().get_context_data(**kwargs)
-#        inv = get_object_or_404(Inventory, pk=self.kwargs.get('pk'))
-#        context['item-inv'] = inv
-#        print(inv)
-#        return context
-
+# Item creation view - renders the custom form and processes it into
+# an Item object upon form submission
 def ItemCreateView(request, pk):
     if request.method == 'POST':
         form = ItemForm(request.POST)
@@ -105,6 +43,8 @@ def ItemCreateView(request, pk):
     print(request)
     return render(request, 'inv_manage/item_form.html', {'form': form})
 
+# Add User View - Handles adding other users to the current user's inventories
+# (sharing). creates a new ShareForm object based on the custom form submission.
 def AddUserView(request, pk):
     if request.method == "POST":
         form = ShareForm(request.POST)
@@ -130,13 +70,64 @@ def AddUserView(request, pk):
         form = ShareForm()
     return render(request, 'inv_manage/share_form.html', {'form': form})
         
+# Renders list of inventories that have been shared with the current user
 def SharedInvs(request):
     context = {
         'shared': SharePass.objects.filter(added_user=request.user)
     }
     return render(request, 'inv_manage/shared_invs.html', context)
 
+###########################################
+#           CLASS BASED VIEWS             #
+###########################################
 
+#Lists the current user's inventories
+class InvListView(ListView):
+    model = Inventory
+    template_name = 'inv_manage/index.html'
+    context_object_name = 'Inventories'
+    ordering = ['-date_created']
+    paginate_by = 5
+
+    # This takes all the Inventories in the DB and filters out Inventories
+    # from other users.
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Inventory.objects.filter(author=self.request.user)
+        else:
+            return Inventory.objects.all()
+
+
+#Provides details into a specific inventory
+class InvDetailView(DetailView):
+    model = Inventory
+    template_name = 'inv_manage/inv_detail.html'
+    context_object_name = 'inv'
+
+    #Passes list of items associated with this inventory to the template
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        inv = get_object_or_404(Inventory, pk=self.kwargs.get('pk'))
+        context['item_list'] = Item.objects.filter(inventory = inv)
+        return context
+
+#Provides inventory creation functionality
+class InvCreateView(LoginRequiredMixin, CreateView):
+    model = Inventory
+    fields = ['name']
+    template_name = 'inv_manage/inv_form.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+#Provides details into a specific item
+class ItemDetailView(DetailView):
+    model = Item
+    template_name = 'inv_manage/item_detail.html'
+    context_object_name = 'item'
+
+#Allows user to update inventory information
 class InvUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Inventory
     fields = ['name']
@@ -153,7 +144,7 @@ class InvUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         else:
             return False
 
-
+#Allows user to delete inventories
 class InvDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Inventory
     template_name = 'inv_manage/confirm_delete.html'

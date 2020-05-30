@@ -2,7 +2,9 @@ from django.urls import path
 from .views import InvListView, InvDetailView, InvCreateView, InvUpdateView, InvDeleteView, ItemDetailView
 from . import views
 
-
+#######################################################################
+# This file defines the URL patterns for the inv_manage app.
+#######################################################################
 
 urlpatterns = [
     path('', InvListView.as_view(), name='inv_manage-index'),

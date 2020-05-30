@@ -3,6 +3,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserUpdateForm, ProfileUpdateForm
 
+#######################################################################
+# This file defines the views for the inv_manage app. In Django, views
+# define the data and functionality associated to each HTML template
+# in the system.
+#######################################################################
+
+#handles registering and confirming registration of new User
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -16,7 +23,7 @@ def register(request):
 
     return render(request, 'users/register.html', {'form': form})
 
-
+#Renders the current users profile and handles updates to profile information
 @login_required
 def profile(request):
     if request.method == "POST":

@@ -2,6 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
 
+#######################################################################
+# This file defines the database models for the users app.
+#######################################################################
+
+# Profile model allows the system to store additional information for each User
+# in the system than the default Django User model does.
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics')
