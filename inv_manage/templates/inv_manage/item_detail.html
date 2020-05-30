@@ -5,11 +5,11 @@
 
 <ul class="collection">
   <article class="media content-section">
-    <img class="rounded-circle article-img" src="{{ item.picture }}" />
+    <img class="rounded-circle article-img" src="{{ item.picture.url }}" />
     <div class="media-body">
       <h2 class="article-title">{{ item.name }}</h2>
-      <p>{{ item.description }}</p>
-      <small>{{ item.quantity }}</small>
+      <p class="text-muted lead">{{ item.description }}</p>
+      <small>Quantity: {{ item.quantity }}</small>
     </div>
   </article>
 </ul>

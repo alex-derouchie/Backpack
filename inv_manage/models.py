@@ -25,7 +25,7 @@ class Item(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     quantity = models.IntegerField(default=0)
-    picture = models.ImageField(default='default.jpg', upload_to='item_pics')
+    picture = models.ImageField(default='item_pics/default.png', upload_to='item_pics')
     inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE)
     #optional
     price = models.FloatField(default=0, blank=True)
