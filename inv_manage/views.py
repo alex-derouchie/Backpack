@@ -15,12 +15,8 @@ from django.contrib import messages
 #######################################################################
 
 #Renders the about page
-def About(request):
+def AboutView(request):
     return render(request, 'inv_manage/about.html', {'title': 'About'})
-
-#Renders the home page
-def IndexView(request):
-    return render(request, 'inv_manage/index.html')
 
 # Item creation view - renders the custom form and processes it into
 # an Item object upon form submission
@@ -81,7 +77,7 @@ def SharedInvs(request):
 #           CLASS BASED VIEWS             #
 ###########################################
 
-#Lists the current user's inventories
+#Lists the current user's inventories -- HOME PAGE
 class InvListView(ListView):
     model = Inventory
     template_name = 'inv_manage/index.html'
