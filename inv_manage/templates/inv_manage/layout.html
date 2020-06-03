@@ -3,8 +3,8 @@
     information common to all pages on the site, including the head of the page,
     the main navigation bar, and the container divs universal to all pages.
 ---------------------------------------------------------------------------------->
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
@@ -16,7 +16,7 @@
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
 
   <!--Main CSS styles-->
-  <link rel="stylesheet" type="text/css" href="../../static/inv_manage/main.css" />
+  <link rel="stylesheet" type="text/css" href="{% static 'inv_manage/style.css' %}" />
 
   <!-- allows for unique titles for specific pages -->
   {% if title %}

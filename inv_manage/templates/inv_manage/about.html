@@ -6,36 +6,40 @@
 
 <h2>Backpack <small class="text-muted">is an inventory management system.</small></h2>
 <h3><small class="text-muted">
-        It was created with Role-playing games in mind, and later extended to support wider functionality.
-    </small></h3>
+                It was created with Role-playing games in mind, and later extended to support wider functionality.
+        </small></h3>
 
 <br>
 <h2 class="mt-4">What you can do</h2>
 <h3><small class="text-muted">Backpack allows you to create and share inventories, in which you can keep track of items
-        with various properties.</small></h3>
+                with various properties.</small></h3>
 
 {% if not user.is_authenticated %}
 <br>
 <h3><small class="text-muted">Once you have <a href="{% url 'login' %}" class="text-muted"><ins>logged in</ins></a> or
-        <a href="{% url 'register' %}" class="text-muted"><ins>registered</ins></a>, you will be greeted with a
-        home page.</small>
+                <a href="{% url 'register' %}" class="text-muted"><ins>registered</ins></a>, you will be greeted with a
+                home page.</small>
 </h3>
 {% else %}
 <br>
 <h3><small class="text-muted">To create a new inventory, click the 'new inventory' button in the top right. After naming
-        and creating your inventory,
-        you can click on the new inventory on the home page to add items into the inventory, or share it with other
-        users on the platform.</small></h3>
+                and creating your inventory,
+                you can click on the new inventory on the home page to add items into the inventory, or share it with
+                other
+                users on the platform.</small></h3>
 {% endif %}
 
 <br>
 <br>
 <h2>About This Project</h2>
 <h3><small class="text-muted">Backpack was created by Alex Derouchie in 2020. It was written using the Django Python
-        framework
-        to provide proper data management, functionality and responsiveness to the HTML/CSS front end. It was styled and
-        formatted
-        using Bootstrap 4. It uses a PostgreSQL backend to store user and inventory data.
-    </small></h3>
-
+                framework
+                to provide proper data management, functionality and responsiveness to the HTML/CSS front end. It was
+                styled and
+                formatted
+                using Bootstrap 4. It uses a PostgreSQL backend to store user and inventory data.
+        </small></h3>
+<h3><small class="text-muted">This website was originally designed as a coding project to demonstrate skills, and later
+                deployed as a complete system.
+        </small></h3>
 {% endblock %}

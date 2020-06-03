@@ -1,5 +1,5 @@
 body {
-  background: #fafafa;
+  background: #fefefe;
   color: #333333;
   margin-top: 5rem;
 }
@@ -10,7 +10,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: #444444;
+  color: #444;
 }
 
 ul {
@@ -86,4 +86,8 @@ a.article-title:hover {
 
 .account-heading {
   font-size: 2.5rem;
+}
+
+.bigger {
+  font-size: 1.5em;
 }
