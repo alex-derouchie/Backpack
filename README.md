@@ -5,8 +5,8 @@ Backpack is a free, simple inventory management system for small businesses and 
 ## Docker
 bellow are example commands to build and run the application using a docker container. 
 ```bash
-dockebuild --tag backpack:latest .
-dockerun --publish 8000:8000 -ti --rm --detach -v ~/Backpack:/backpack --name backpack-test backpack:latest
+docker build --tag backpack:latest .
+docker run --publish 8000:8000 -ti --rm --detach -v ~/Backpack:/backpack --name backpack-test backpack:latest
 ```
 
 ## Installation
