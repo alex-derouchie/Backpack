@@ -16,5 +16,5 @@ urlpatterns = [
     path('inv/<int:pk>/share/', views.AddUserView, name='inv_manage-add-user'),
     path('item/<int:pk>/', ItemDetailView.as_view(), name='inv_manage-item-detail'),
     path('inv/new/', InvCreateView.as_view(), name='inv_manage-create'),
-    path('about/', views.About, name='inv_manage-about')
+    path('about/', views.AboutView, name='inv_manage-about')
 ]
