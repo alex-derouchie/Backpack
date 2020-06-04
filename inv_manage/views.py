@@ -16,11 +16,13 @@ from django.contrib import messages
 
 #Renders the about page
 def AboutView(request):
+    print(request)
     return render(request, 'inv_manage/about.html', {'title': 'About'})
 
 # Item creation view - renders the custom form and processes it into
 # an Item object upon form submission
 def ItemCreateView(request, pk):
+    print(request)
     if request.method == 'POST':
         form = ItemForm(request.POST)
         if form.is_valid():
@@ -36,12 +38,12 @@ def ItemCreateView(request, pk):
             return HttpResponseRedirect(f'/inv/{pk}')
     else:
         form = ItemForm()
-    print(request)
     return render(request, 'inv_manage/item_form.html', {'form': form})
 
 # Add User View - Handles adding other users to the current user's inventories
 # (sharing). creates a new ShareForm object based on the custom form submission.
 def AddUserView(request, pk):
+    print(request)
     if request.method == "POST":
         form = ShareForm(request.POST)
         if form.is_valid():
@@ -68,6 +70,7 @@ def AddUserView(request, pk):
         
 # Renders list of inventories that have been shared with the current user
 def SharedInvs(request):
+    print(request)
     context = {
         'shared': SharePass.objects.filter(added_user=request.user)
     }
