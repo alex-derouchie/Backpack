@@ -9,8 +9,10 @@
     <div class="media-body">
       <h2 class="article-title">{{ item.name }}</h2>
       <p class="text-muted lead">{{ item.description }}</p>
+      <a href="{% url 'inv_manage-update-item' item.id %}" class=" btn btn-sm btn-outline-info">Update</a>
       <small>Quantity: {{ item.quantity }}</small>
     </div>
   </article>
+  <a href="{% url 'inv_manage-detail' item.inventory.id %}">Return to Inventory</a>
 </ul>
 {% endblock %}

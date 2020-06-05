@@ -35,6 +35,9 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
+        
+    def get_absolute_url(self):
+        return reverse('inv_manage-item-detail', kwargs={'pk': self.pk})
 
 #Database model required to support inventory sharing
 class SharePass(models.Model):

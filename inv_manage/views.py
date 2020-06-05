@@ -157,3 +157,17 @@ class InvDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         else:
             return False
 
+class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Item
+    fields = ['name', 'description', 'quantity']
+    template_name = 'inv_manage/item_update_form.html'
+
+
+    def test_func(self):
+        current_user = self.request.user
+        item_inventory = self.get_object().inventory
+        if current_user == item_inventory.author or SharePass.objects.filter(added_user=current_user, inventory=item_inventory, can_edit=True).count() == 1:
+            return True
+        else:
+            return False
+
