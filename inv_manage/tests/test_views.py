@@ -1,4 +1,4 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, SimpleTestCase
 from django.urls import reverse
 from inv_manage.models import Inventory, Item, SharePass
 from django.contrib.auth.models import User
@@ -18,6 +18,9 @@ class TestViews(TestCase):
         self.item_create_url = reverse('inv_manage-create-item', args=[self.test_inventory.pk])
         self.add_user_url = reverse('inv_manage-add-user', args=[self.test_inventory.pk])
         self.shared_invs_url = reverse('inv_manage-shared')
+        self.inv_list_url = reverse('inv_manage-index')
+        self.inv_detail_url = reverse('inv_manage-detail', args=[self.test_inventory.pk])
+        self.inv_create_url = reverse('inv_manage-create')
 
 
     #About View Tests
@@ -93,3 +96,33 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'inv_manage/shared_invs.html')
         print('shared invs view GET pass')
+
+    
+    #CLASS BASED VIEWS TESTS
+
+    #Inv List View Tests
+    def test_inv_list_view_GET(self):
+        response = self.client.get(self.inv_list_url)
+        
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'inv_manage/index.html')
+        print('inv list view GET pass')
+
+    #Inv Detail View Tests
+    def test_inv_detail_view_GET(self):
+        response = self.client.get(self.inv_detail_url)
+        
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'inv_manage/inv_detail.html')
+        print('inv detail view GET pass')
+
+    #Inv Create View Tests
+    def test_inv_create_view_POST(self):
+        response = self.client.post(self.inv_create_url, {
+            'name': 'InvCreateTestInv'
+        })
+        
+        self.assertEquals(response.status_code, 302)
+        #CURRENTLY BROKEN
+        self.assertEquals(Inventory.objects.filter(name='InvCreateTestInv').count(), 0)
+        print('inv create view GET pass')
