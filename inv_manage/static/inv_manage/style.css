@@ -1,5 +1,5 @@
 body {
-  background: #fefefe;
+  background: red;
   color: #333333;
   margin-top: 5rem;
 }
@@ -90,4 +90,8 @@ a.article-title:hover {
 
 .bigger {
   font-size: 1.5em;
+}
+
+.item-image {
+  width: 35px;
 }

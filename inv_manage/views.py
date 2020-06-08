@@ -5,8 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from .models import Inventory, Item, SharePass
-from .forms import ItemForm, ShareForm
+from .forms import ItemForm, ShareForm, ItemUpdateForm
 from django.contrib import messages
+from django.urls import reverse
 
 #######################################################################
 # This file defines the views for the inv_manage app. In Django, views
@@ -24,20 +25,25 @@ def AboutView(request):
 def ItemCreateView(request, pk):
     print(request)
     if request.method == 'POST':
-        form = ItemForm(request.POST)
+        form = ItemUpdateForm(request.POST, request.FILES)
         if form.is_valid():
             inv = Inventory.objects.get(pk=pk)
             item = Item()
-            item.name = form.cleaned_data['item_name']
-            item.description = form.cleaned_data['item_description']
-            item.quantity = form.cleaned_data['item_quantity']
+            item.name = form.cleaned_data['name']
+            item.description = form.cleaned_data['description']
+            item.quantity = form.cleaned_data['quantity']
             item.inventory = inv
+            item.picture = form.cleaned_data['picture']
+            item.price = form.cleaned_data['price']
+            item.storage_location = form.cleaned_data['storage_location']
+            item.status = form.cleaned_data['status']
+            item.internal_id = form.cleaned_data['internal_id']
             item.save()
             inv.inv_size = Item.objects.filter(inventory=inv).count()
             inv.save()
             return HttpResponseRedirect(f'/inv/{pk}')
     else:
-        form = ItemForm()
+        form = ItemUpdateForm()
     return render(request, 'inv_manage/item_form.html', {'form': form})
 
 # Add User View - Handles adding other users to the current user's inventories
@@ -85,7 +91,6 @@ class InvListView(ListView):
     model = Inventory
     template_name = 'inv_manage/index.html'
     context_object_name = 'Inventories'
-    ordering = ['-date_created']
     paginate_by = 5
 
     # This takes all the Inventories in the DB and filters out Inventories
@@ -146,7 +151,7 @@ class InvUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 #Allows user to delete inventories
 class InvDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Inventory
-    template_name = 'inv_manage/confirm_delete.html'
+    template_name = 'inv_manage/delete_inventory.html'
     context_object_name = 'inv'
     success_url = '/'
 
@@ -157,11 +162,35 @@ class InvDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         else:
             return False
 
-class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Item
-    fields = ['name', 'description', 'quantity']
-    template_name = 'inv_manage/item_update_form.html'
+# class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+#     model = Item
+#     fields = ['name', 'description', 'quantity', 'picture', 'price', 'storage_location', 'status','internal_id']
+#     template_name = 'inv_manage/item_update_form.html'
 
+
+#     def test_func(self):
+#         current_user = self.request.user
+#         item_inventory = self.get_object().inventory
+#         if current_user == item_inventory.author or SharePass.objects.filter(added_user=current_user, inventory=item_inventory, can_edit=True).count() == 1:
+#             return True
+#         else:
+#             return False
+
+def ItemUpdateView(request, pk):
+    item = Item.objects.get(pk=pk)
+    if (request.method == "POST"):
+        form = ItemUpdateForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(f'/inv/{item.inventory.pk}')
+    else:
+        form = ItemUpdateForm(instance=item)
+    return render(request, 'inv_manage/item_update_form.html', {'form': form})
+
+class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Item
+    template_name = 'inv_manage/delete_item.html'
+    context_object_name = 'item'
 
     def test_func(self):
         current_user = self.request.user
@@ -171,3 +200,11 @@ class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         else:
             return False
 
+    def get_success_url(self):
+        return reverse('inv_manage-detail', args=[self.object.inventory.id])
+
+    def delete(self, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.inventory.inv_size -= 1
+        self.object.inventory.save()
+        return super(ItemDeleteView, self).delete(*args, **kwargs)

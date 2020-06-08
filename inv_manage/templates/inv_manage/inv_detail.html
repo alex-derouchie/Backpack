@@ -19,8 +19,9 @@
       <ul class="list-group m-3">
         {% for item in item_list %}
         <li class="list-group-item">
+          <img class="rounded-circle article-img" style="width: 40px; height: 40px;" src="{{ item.picture.url }}" />
           <a href="{% url 'inv_manage-item-detail' item.pk %}">{{ item.name }}</a>
-          <small class="float-right">quantity: {{ item.quantity }}</small>
+          <small class="float-right mt-2 text-muted">quantity: {{ item.quantity }}</small>
         </li>
         {% endfor %}
       </ul>

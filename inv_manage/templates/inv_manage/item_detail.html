@@ -9,8 +9,31 @@
     <div class="media-body">
       <h2 class="article-title">{{ item.name }}</h2>
       <p class="text-muted lead">{{ item.description }}</p>
+      {% if item.price %}
+      <hr>
+      <h6 class="text-muted">Price</h6>
+      <p class="text-muted">{{ item.price }}</p>
+      {% endif %}
+      {% if item.storage_location %}
+      <hr>
+      <h6 class="text-muted">Storage Location</h6>
+      <p class="text-muted">{{ item.storage_location }}</p>
+      {% endif %}
+      {% if item.status %}
+      <hr>
+      <h6 class="text-muted">Status</h6>
+      <p class="text-muted">{{ item.status }}</p>
+      {% endif %}
+      {% if item.internal_id %}
+      <hr>
+      <h6 class="text-muted">Identification Number</h6>
+      <p class="text-muted">{{ item.internal_id }}</p>
+      {% endif %}
+      <hr>
+      <h6 class="text-muted">Quantity</h6>
+      <p class="text-muted">{{ item.quantity }}</p>
       <a href="{% url 'inv_manage-update-item' item.id %}" class=" btn btn-sm btn-outline-info">Update</a>
-      <small>Quantity: {{ item.quantity }}</small>
+      <a href="{% url 'inv_manage-delete-item' item.id %}" class=" btn btn-sm btn-outline-danger">Delete</a>
     </div>
   </article>
   <a href="{% url 'inv_manage-detail' item.inventory.id %}">Return to Inventory</a>

@@ -14,6 +14,12 @@ class ItemForm(forms.Form):
     #Files are complicated - gonna implement this later
     #item_picture = forms.ImageField
 
+class ItemUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Item
+        fields = '__all__'
+        exclude = ['inventory']
+
 #Form responsible for adding other users to one of the current users' inventories.
 class ShareForm(forms.Form):
     user_to_add = forms.CharField(label="Add User", max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Username'}))
