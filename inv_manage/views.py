@@ -15,16 +15,14 @@ from django.contrib import messages
 #######################################################################
 
 #Renders the about page
-def About(request):
+def AboutView(request):
+    print(request)
     return render(request, 'inv_manage/about.html', {'title': 'About'})
-
-#Renders the home page
-def IndexView(request):
-    return render(request, 'inv_manage/index.html')
 
 # Item creation view - renders the custom form and processes it into
 # an Item object upon form submission
 def ItemCreateView(request, pk):
+    print(request)
     if request.method == 'POST':
         form = ItemForm(request.POST)
         if form.is_valid():
@@ -40,12 +38,12 @@ def ItemCreateView(request, pk):
             return HttpResponseRedirect(f'/inv/{pk}')
     else:
         form = ItemForm()
-    print(request)
     return render(request, 'inv_manage/item_form.html', {'form': form})
 
 # Add User View - Handles adding other users to the current user's inventories
 # (sharing). creates a new ShareForm object based on the custom form submission.
 def AddUserView(request, pk):
+    print(request)
     if request.method == "POST":
         form = ShareForm(request.POST)
         if form.is_valid():
@@ -72,6 +70,7 @@ def AddUserView(request, pk):
         
 # Renders list of inventories that have been shared with the current user
 def SharedInvs(request):
+    print(request)
     context = {
         'shared': SharePass.objects.filter(added_user=request.user)
     }
@@ -81,7 +80,7 @@ def SharedInvs(request):
 #           CLASS BASED VIEWS             #
 ###########################################
 
-#Lists the current user's inventories
+#Lists the current user's inventories -- HOME PAGE
 class InvListView(ListView):
     model = Inventory
     template_name = 'inv_manage/index.html'
@@ -154,6 +153,20 @@ class InvDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         inv = self.get_object()
         if self.request.user == inv.author:
+            return True
+        else:
+            return False
+
+class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Item
+    fields = ['name', 'description', 'quantity']
+    template_name = 'inv_manage/item_update_form.html'
+
+
+    def test_func(self):
+        current_user = self.request.user
+        item_inventory = self.get_object().inventory
+        if current_user == item_inventory.author or SharePass.objects.filter(added_user=current_user, inventory=item_inventory, can_edit=True).count() == 1:
             return True
         else:
             return False
