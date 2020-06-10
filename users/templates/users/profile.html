@@ -20,6 +20,7 @@
     <fieldset class="form-group">
       <legend class="border-bottom mb-4">Profile Information</legend>
       {{ user_form|crispy }} {{ profile_form|crispy }}
+      <small class="text-muted">Images that are not square will be distorted.</small>
     </fieldset>
     <div class="form-group">
       <button class="btn btn-outline-info" type="submit">Update</button>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -22,59 +22,69 @@ def AboutView(request):
 
 # Item creation view - renders the custom form and processes it into
 # an Item object upon form submission
+@login_required
 def ItemCreateView(request, pk):
     print(request)
-    if request.method == 'POST':
-        form = ItemUpdateForm(request.POST, request.FILES)
-        if form.is_valid():
-            inv = Inventory.objects.get(pk=pk)
-            item = Item()
-            item.name = form.cleaned_data['name']
-            item.description = form.cleaned_data['description']
-            item.quantity = form.cleaned_data['quantity']
-            item.inventory = inv
-            item.picture = form.cleaned_data['picture']
-            item.price = form.cleaned_data['price']
-            item.storage_location = form.cleaned_data['storage_location']
-            item.status = form.cleaned_data['status']
-            item.internal_id = form.cleaned_data['internal_id']
-            item.save()
-            inv.inv_size = Item.objects.filter(inventory=inv).count()
-            inv.save()
-            return HttpResponseRedirect(f'/inv/{pk}')
+    inv = Inventory.objects.get(pk=pk)
+    if SharePass.objects.filter(added_user=request.user, inventory=inv, can_edit=True).count() == 1 or request.user == inv.author:
+        if request.method == 'POST':
+            form = ItemUpdateForm(request.POST, request.FILES)
+            if form.is_valid():
+                item = Item()
+                item.name = form.cleaned_data['name']
+                item.description = form.cleaned_data['description']
+                item.quantity = form.cleaned_data['quantity']
+                item.inventory = inv
+                item.picture = form.cleaned_data['picture']
+                item.price = form.cleaned_data['price']
+                item.storage_location = form.cleaned_data['storage_location']
+                item.status = form.cleaned_data['status']
+                item.internal_id = form.cleaned_data['internal_id']
+                item.save()
+                inv.inv_size = Item.objects.filter(inventory=inv).count()
+                inv.save()
+                return HttpResponseRedirect(f'/inv/{pk}')
+        else:
+            form = ItemUpdateForm()
+        return render(request, 'inv_manage/item_form.html', {'form': form})
     else:
-        form = ItemUpdateForm()
-    return render(request, 'inv_manage/item_form.html', {'form': form})
+        return HttpResponseForbidden()
 
 # Add User View - Handles adding other users to the current user's inventories
 # (sharing). creates a new ShareForm object based on the custom form submission.
+@login_required
 def AddUserView(request, pk):
     print(request)
-    if request.method == "POST":
-        form = ShareForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['user_to_add']
-            access = form.cleaned_data['user_access']
-            if (User.objects.filter(username=username).count() > 0 and username != request.user.username):
-                new_pass = SharePass()
-                new_pass.added_user = User.objects.get(username = username)
-                new_pass.inventory = Inventory.objects.get(pk=pk)
-                if(access == "can_edit"):
-                    new_pass.can_edit = True
+    inv = Inventory.objects.get(pk=pk)
+    if SharePass.objects.filter(added_user=request.user, inventory=inv, can_edit=True).count() == 1 or request.user == inv.author:
+        if request.method == "POST":
+            form = ShareForm(request.POST)
+            if form.is_valid():
+                username = form.cleaned_data['user_to_add']
+                access = form.cleaned_data['user_access']
+                if (User.objects.filter(username=username).count() > 0 and username != request.user.username):
+                    new_pass = SharePass()
+                    new_pass.added_user = User.objects.get(username = username)
+                    new_pass.inventory = Inventory.objects.get(pk=pk)
+                    if(access == "can_edit"):
+                        new_pass.can_edit = True
+                    else:
+                        new_pass.can_edit = False
+                    new_pass.save()
+                    messages.success(request, f'Inventory shared with user')
+                    return HttpResponseRedirect(f'/inv/{pk}')
+                elif (username == request.user.username):
+                    messages.warning(request, "You can't share Inventories with yourself!")
                 else:
-                    new_pass.can_edit = False
-                new_pass.save()
-                messages.success(request, f'Inventory shared with user')
-                return HttpResponseRedirect(f'/inv/{pk}')
-            elif (username == request.user.username):
-                messages.warning(request, "You can't share Inventories with yourself!")
-            else:
-                messages.warning(request, "User could not be found")
+                    messages.warning(request, "User could not be found")
+        else:
+            form = ShareForm()
+        return render(request, 'inv_manage/share_form.html', {'form': form})
     else:
-        form = ShareForm()
-    return render(request, 'inv_manage/share_form.html', {'form': form})
+        return HttpResponseForbidden()
         
 # Renders list of inventories that have been shared with the current user
+@login_required
 def SharedInvs(request):
     print(request)
     context = {
@@ -97,13 +107,13 @@ class InvListView(ListView):
     # from other users.
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            return Inventory.objects.filter(author=self.request.user)
+            return Inventory.objects.filter(author=self.request.user).order_by('-date_created')
         else:
-            return Inventory.objects.all()
+            return None
 
 
 #Provides details into a specific inventory
-class InvDetailView(DetailView):
+class InvDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Inventory
     template_name = 'inv_manage/inv_detail.html'
     context_object_name = 'inv'
@@ -112,8 +122,21 @@ class InvDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         inv = get_object_or_404(Inventory, pk=self.kwargs.get('pk'))
+        #For allowing sharing or not
+        if SharePass.objects.filter(added_user=self.request.user, inventory=inv, can_edit=True).count() == 1 or self.request.user == inv.author:
+            context['can_edit'] = True
+        else:
+            context['can_edit'] = False
         context['item_list'] = Item.objects.filter(inventory = inv)
         return context
+
+    def test_func(self):
+        current_user = self.request.user
+        item_inventory = self.get_object()
+        if current_user == item_inventory.author or SharePass.objects.filter(added_user=current_user, inventory=item_inventory).count() == 1:
+            return True
+        else:
+            return False
 
 #Provides inventory creation functionality
 class InvCreateView(LoginRequiredMixin, CreateView):
@@ -126,10 +149,18 @@ class InvCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 #Provides details into a specific item
-class ItemDetailView(DetailView):
+class ItemDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Item
     template_name = 'inv_manage/item_detail.html'
     context_object_name = 'item'
+
+    def test_func(self):
+        current_user = self.request.user
+        item_inventory = self.get_object().inventory
+        if current_user == item_inventory.author or SharePass.objects.filter(added_user=current_user, inventory=item_inventory, can_edit=True).count() == 1:
+            return True
+        else:
+            return False
 
 #Allows user to update inventory information
 class InvUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -175,17 +206,20 @@ class InvDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 #             return True
 #         else:
 #             return False
-
+@login_required
 def ItemUpdateView(request, pk):
     item = Item.objects.get(pk=pk)
-    if (request.method == "POST"):
-        form = ItemUpdateForm(request.POST, request.FILES, instance=item)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(f'/inv/{item.inventory.pk}')
+    if SharePass.objects.filter(added_user=request.user, inventory=item.inventory, can_edit=True).count() == 1 or request.user == item.inventory.author:
+        if (request.method == "POST"):
+            form = ItemUpdateForm(request.POST, request.FILES, instance=item)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(f'/inv/{item.inventory.pk}')
+        else:
+            form = ItemUpdateForm(instance=item)
+        return render(request, 'inv_manage/item_update_form.html', {'form': form})
     else:
-        form = ItemUpdateForm(instance=item)
-    return render(request, 'inv_manage/item_update_form.html', {'form': form})
+        return HttpResponseForbidden()
 
 class ItemDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Item
