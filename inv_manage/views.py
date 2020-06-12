@@ -101,7 +101,8 @@ class InvListView(ListView):
     model = Inventory
     template_name = 'inv_manage/index.html'
     context_object_name = 'Inventories'
-    paginate_by = 5
+    #Pagination breaks the deployed project right now, thus no pagination
+    #paginate_by = 5
 
     # This takes all the Inventories in the DB and filters out Inventories
     # from other users.
