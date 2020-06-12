@@ -60,6 +60,15 @@
   {% endfor %} {% endif %}
 
   {% if user.is_authenticated %}
+  {% if not Inventories %}
+  <div class="container">
+    <div class="col-xs-12" style="height:150px;"></div>
+    <div class="text-center">
+      <h1 class="display-4 mb-4">You don't have any inventories.</h1>
+      <a class="btn btn-sm btn-outline-secondary bigger mt-4" href="{% url 'inv_manage-create' %}">New Inventory</a>
+    </div>
+  </div>
+  {% else %}
   <div class="container">
     <div>
       <main class="container">
@@ -84,7 +93,7 @@
                 {% endfor %}
             </ul>
 
-            <!--
+
             {% if is_paginated %}
             <small class="mx-4"> </small>
             {% if page_obj.has_previous %}
@@ -105,28 +114,20 @@
             <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
             {% endif %}
             {% endif %}
-            -->
+
           </div>
         </div>
       </main>
     </div>
   </div>
+  {% endif %}
+
   {% elif not user.is_authenticated %}
   <div class="container">
     <div class="col-xs-12" style="height:150px;"></div>
     <div class="text-center">
       <h1 class="display-1">Welcome to Backpack.</h1>
       <h3 class="display-4 pt-4"><a href="{% url 'register' %}">Get Started</a></h3>
-    </div>
-  </div>
-  {% endif %}
-
-  {% if not Inventories %}
-  <div class="container">
-    <div class="col-xs-12" style="height:150px;"></div>
-    <div class="text-center">
-      <h1 class="display-4 mb-4">You don't have any inventories.</h1>
-      <a class="btn btn-sm btn-outline-secondary bigger mt-4" href="{% url 'inv_manage-create' %}">New Inventory</a>
     </div>
   </div>
   {% endif %}
