@@ -1,6 +1,6 @@
 # Backpack
 
-Backpack is a free, simple inventory management system for small businesses and individuals.
+Backpack is a free, simple inventory management system for small businesses and individuals. It allows users to create and share Inventories of Items on backpack-inv.com. This system provides features such as secure User registration and authentication, profile and item image support, and a number of other helpful features.
 
 ## Docker
 bellow are example commands to build and run the application using a docker container. 
@@ -9,30 +9,14 @@ docker build --tag backpack:latest .
 docker run --publish 8000:8000 -ti --rm --detach -v ~/Backpack:/backpack --name backpack-test backpack:latest
 ```
 
-## Installation
+## Live Build
 
-Clone the repository to your directory of choice. Within that directory, run in the command line:
-
-```bash
-py manage.py runserver
-```
-
-To  run the development server.
-
-note that current versions of Python, Django, and Pillow are required. To install Django and Pillow:
-
-```bash
-pip install django
-pip install pillow
-```
+This project is now deployed! Visit backpack-inv.com to use today, or backpack-inv.herokuapp.com for HTTPS access.
 
 ## Usage
 
-Once the development server is running, navigate to:
+Feel free to tinker with the website, stress test it under load, and submit issue or feature requests to the repository. I'd be happy to improve this project!
 
-```bash
-localhost:8000
-```
-to preview the project. From there, you can begin developing!
-This project does not yet have a final release.
+
+This project was created in 2020 by Alex Derouchie using the Django Python framework.
 
