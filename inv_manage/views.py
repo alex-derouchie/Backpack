@@ -65,11 +65,16 @@ def AddUserView(request, pk):
                 if (User.objects.filter(username=username).count() > 0 and username != request.user.username):
                     new_pass = SharePass()
                     new_pass.added_user = User.objects.get(username = username)
-                    new_pass.inventory = Inventory.objects.get(pk=pk)
+                    new_pass.inventory = inv
                     if(access == "can_edit"):
                         new_pass.can_edit = True
                     else:
                         new_pass.can_edit = False
+
+                    if SharePass.objects.filter(added_user=username, inventory=inv, can_edit=new_pass.can_edit) > 0:
+                        messages.warning(request, "Inventory has already been shared with this user!")
+                    elif SharePass.objects.filter(added_user=username, inventory=inv, can_edit= not new_pass.can_edit) > 0:
+                        messages.success(request, "Access has been updated for user.")
                     new_pass.save()
                     messages.success(request, f'Inventory shared with user')
                     return HttpResponseRedirect(f'/inv/{pk}')
@@ -134,7 +139,7 @@ class InvDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def test_func(self):
         current_user = self.request.user
         item_inventory = self.get_object()
-        if current_user == item_inventory.author or SharePass.objects.filter(added_user=current_user, inventory=item_inventory).count() == 1:
+        if current_user == item_inventory.author or SharePass.objects.filter(added_user=current_user, inventory=item_inventory).count() > 1:
             return True
         else:
             return False
