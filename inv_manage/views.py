@@ -73,8 +73,10 @@ def AddUserView(request, pk):
 
                     if SharePass.objects.filter(added_user=username, inventory=inv, can_edit=new_pass.can_edit) > 0:
                         messages.warning(request, "Inventory has already been shared with this user!")
+                        return HttpResponseRedirect(f'/inv/{pk}')
                     elif SharePass.objects.filter(added_user=username, inventory=inv, can_edit= not new_pass.can_edit) > 0:
                         messages.success(request, "Access has been updated for user.")
+                        return HttpResponseRedirect(f'/inv/{pk}')
                     new_pass.save()
                     messages.success(request, f'Inventory shared with user')
                     return HttpResponseRedirect(f'/inv/{pk}')
