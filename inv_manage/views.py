@@ -141,7 +141,7 @@ class InvDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def test_func(self):
         current_user = self.request.user
         item_inventory = self.get_object()
-        if current_user == item_inventory.author or SharePass.objects.filter(added_user=current_user, inventory=item_inventory).count() > 1:
+        if current_user == item_inventory.author or SharePass.objects.filter(added_user=current_user, inventory=item_inventory).count() == 1:
             return True
         else:
             return False

@@ -73,14 +73,14 @@
     <div>
       <main class="container">
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-md-8 ">
             <ul class="collection">
               {% if Inventories %}
               <h2 class="center-align">Your Inventories</h3>
                 {% endif %}
                 {% for inv in Inventories %}
                 <article class="media content-section">
-                  <img class="rounded-circle article-img" src="{{ inv.author.profile.image.url }}">
+                  <img class="rounded-circle article-img profile-pic" src="{{ inv.author.profile.image.url }}">
                   <div class="media-body">
                     <div class="article-metadata">
                       <span class="mr-2">{{ inv.author }}</span>
@@ -93,7 +93,7 @@
                 {% endfor %}
             </ul>
 
-
+            <!-- Pagination currently disabled - breaking change -->
             {% if is_paginated %}
             <small class="mx-4"> </small>
             {% if page_obj.has_previous %}
@@ -114,7 +114,8 @@
             <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
             {% endif %}
             {% endif %}
-
+            <br>
+            <br>
           </div>
         </div>
       </main>

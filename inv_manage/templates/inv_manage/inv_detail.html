@@ -6,7 +6,7 @@
 {% extends 'inv_manage/layout.html' %} {% block content %}
 <ul class="collection">
   <article class="media content-section">
-    <img class="rounded-circle article-img" src="{{ inv.author.profile.image.url }}" />
+    <img class="rounded-circle article-img profile-pic" src="{{ inv.author.profile.image.url }}" />
     <div class="media-body">
       <div class="article-metadata">
         <span class="mr-2">{{ inv.author }}</span>
@@ -21,7 +21,8 @@
         <li class="list-group-item">
           <img class="rounded-circle article-img" style="width: 40px; height: 40px;" src="{{ item.picture.url }}" />
           <a href="{% url 'inv_manage-item-detail' item.pk %}">{{ item.name }}</a>
-          <small class="float-right mt-2 text-muted">quantity: {{ item.quantity }}</small>
+          <small class="float-right mt-2 text-muted"> {{ item.quantity }}</small>
+          <small id="detail-quantity" class="float-right mt-2 text-muted">quantity: </small>
         </li>
         {% endfor %}
       </ul>
