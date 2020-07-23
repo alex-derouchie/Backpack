@@ -14,6 +14,7 @@ class UserRegistrationForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
     
+    #Raise ValueError if the email for the new user is not unique.
     def clean(self):
        email = self.cleaned_data.get('email')
        if User.objects.filter(email=email).exists():

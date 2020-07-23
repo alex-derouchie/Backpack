@@ -50,6 +50,7 @@ class Item(models.Model):
     #         img.thumbnail(output_size)
     #         img.save(self.picture.path)
 
+
 #Database model required to support inventory sharing
 class SharePass(models.Model):
     added_user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -56,6 +56,7 @@ def ItemCreateView(request, pk):
 def AddUserView(request, pk):
     print(request)
     inv = Inventory.objects.get(pk=pk)
+    #Ensures that the current user has the permission to add a user to an inventory
     if SharePass.objects.filter(added_user=request.user, inventory=inv, can_edit=True).count() == 1 or request.user == inv.author:
         if request.method == "POST":
             form = ShareForm(request.POST)
@@ -71,6 +72,7 @@ def AddUserView(request, pk):
                     else:
                         new_pass.can_edit = False
 
+                    #Checks for duplicate share attempts, otherwise share is successful.
                     if SharePass.objects.filter(added_user=new_pass.added_user, inventory=inv, can_edit=new_pass.can_edit).count() > 0:
                         messages.warning(request, "Inventory has already been shared with this user!")
                         return HttpResponseRedirect(f'/inv/{pk}')
@@ -80,8 +82,11 @@ def AddUserView(request, pk):
                     new_pass.save()
                     messages.success(request, f'Inventory shared with user')
                     return HttpResponseRedirect(f'/inv/{pk}')
+
+                #Checks if user is trying to share inventory with themselves (People these days...)
                 elif (username == request.user.username):
                     messages.warning(request, "You can't share Inventories with yourself!")
+                #If all elsse fails, user couldn't be found.
                 else:
                     messages.warning(request, "User could not be found")
         else:
@@ -201,6 +206,7 @@ class InvDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         else:
             return False
 
+# May revert back to class based updateview in the future
 # class ItemUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 #     model = Item
 #     fields = ['name', 'description', 'quantity', 'picture', 'price', 'storage_location', 'status','internal_id']
@@ -214,6 +220,7 @@ class InvDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 #             return True
 #         else:
 #             return False
+
 @login_required
 def ItemUpdateView(request, pk):
     item = Item.objects.get(pk=pk)
